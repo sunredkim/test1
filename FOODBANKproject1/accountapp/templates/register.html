@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="author" content="Kodinger">
+	<title>My Login Page &mdash; Bootstrap 4 Login Page Snippet</title>
+	<link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/my-login.css">
+</head>
+<body class="my-login-page">
+
+	{% if error %}
+		<script>
+			alert("비밀번호 일치하지 않습니다.");
+		</script>
+	{% endif %}
+
+	<section class="h-100">
+		<div class="container h-100">
+			<div class="row justify-content-md-center h-100">
+				<div class="card-wrapper">
+					<div class="brand">
+						<a href="{% url 'home' %}"><img src="/static/img/logo_login.png"></a>
+					</div>
+					<div class="card fat">
+						<div class="card-body">
+							<h4 class="card-title">Register</h4>
+							<form method="POST" action="{% url 'register'%}">
+								<!--server에게 /accountapp/register/페이지를 POST 방식으로 보내겠다.
+								근데 post 방식인 경우 보안 목적으로 csrf를 꼭 써줘야한다.-->
+							 	 {% csrf_token %}
+								<div class="form-group">
+									<label for="name">Name</label>
+									<input id="name" type="text" class="form-control" name="name" required autofocus>
+								</div>
+
+								<div class="form-group">
+									<label for="email">E-Mail Address</label>
+									<input id="email" type="email" class="form-control" name="email" required>
+								</div>
+
+								<div class="form-group">
+									<label for="password">Password</label>
+									<input id="password" type="password" class="form-control" name="password" required data-eye>
+								</div>
+
+								<div class="form-group">
+									<label for="re-password">re-Password</label>
+									<input id="re-password" type="password" class="form-control" name="re-password" required data-eye>
+								</div>
+
+								<div class="form-group">
+									<label>
+										<input type="checkbox" name="aggree" value="1"> I agree to the Terms and Conditions
+									</label>
+								</div>
+
+								<div class="form-group no-margin">
+									<button type="submit" class="btn btn-primary btn-block" style="background-color:#4d3319; border-color:#4d3319;">
+										Register
+									</button>
+									<!--Register를 누르면 상단에 입력한 내용을 submit-->
+								</div>
+								<div class="margin-top20 text-center">
+									Already have an account? <a href="{% url 'login' %}" style="color:#4d3319;">Login</a>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="footer">
+						Copyright &copy; FoodHERO 2021
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script src="js/jquery.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<script src="js/my-login.js"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #212529" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand js-scroll-trigger" href="{% url 'home'%}#page-top"><h1 style="color:white; float:left; margin-left:20px; ">Food HERO</h1></a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars ml-1"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav text-uppercase ml-auto">
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'home'%}#aboutus">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'home'%}#product14">대표 물품</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'foodBankMap'%}">푸드뱅크 지도</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'centerItem' %}">물품 조회</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'board' %}">게시판</a></li>
+                        {% if user_name %}
+						<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" onclick="return false;">{{user_name}} 님!</a>
+							<ul class="dropdown-menu">
+							  <li><a class="dropdown-item" href="{% url 'mypage' %}">내 정보</a></li>
+							  <li><a class="dropdown-item" href="{% url 'logout'%}?next={{request.get_full_path}}">Log Out!!</a></li>
+							</ul>
+						</li>
+					  {% else %}
+						<li class="nav-item"><a class="nav-link" href="{% url 'login'%}?next={{request.get_full_path}}">Log in</a></li>
+					  {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+<section class="page-section">
+
+    <div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px" >
+        <h2>내 정보</h2><hr style="border:1px solid black;">
+        <!-- First Photo Grid-->
+        <div>
+            <div class="container-fluid">
+              <div class="row">
+                <nav class="col-sm-2 col-4" id="myScrollspy" >
+                  <ul class="nav nav-pills flex-column" style="margin-top:150px;">
+
+                      <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="displayinfo(); return false;">내 정보</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="displaypost(); return false;">내가 쓴 글</a>
+                      </li>
+
+                  </ul>
+                </nav>
+
+                <div id='myinfo' class="col-sm-10 col-8" style="display:block;">
+                    <h1 style="margin-top:30px;">내 정보</h1>
+                    <br>
+                    <h2> - 이름 - </h2><br>
+                    <h4>{{user_name}}</h4><br><br>
+                    <h2> - email - </h2><br>
+                    <h4>{{user_email}}</h4>
+                </div>
+
+
+                <div id='userpost' class="col-sm-10 col-8" style="display:none;">
+                    <div class="container" style="margin-top:30px;">
+                    <h2>내가 쓴 글</h2><br>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width:10%;">번호</th>
+                                <th style="width:40%;">제목</th>
+                                <th style="width:10%;">작성자</th>
+                                <th style="width:20%;">작성일</th>
+                                <th style="width:10%;">조회수</th>
+                                <th style="width:10%;">추천수</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for data in Board%}
+                            <tr onclick="updateview({{data.id}})">
+                                <td>{{data.id}}</td>
+                                <td style="font-weight:bolder;">{{data.title}}</td>
+                                <td>{{data.writer.username}}</td>
+                                <td>{{data.writedate |date:"Y-m-d" }}</td>
+                                <td>{{data.cnt}}</td>
+                                <td>{{data.like}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+          <script>
+            function displaypost(){
+                $('#myinfo').css('display','none');
+                $('#userpost').css('display','block');
+            }
+            function displayinfo(){
+                $('#userpost').css('display','none');
+                $('#myinfo').css('display','block');
+            }
+
+            function updateview(id){
+                location.href="{% url 'view'%}?view="+id+"&update=1"
+            }
+          </script>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    {% if error %}
+		<script>
+			alert("{{error}}");
+		</script>
+	{% endif %}
+<body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #212529" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand js-scroll-trigger" href="{% url 'home'%}#page-top"><h1 style="color:white; float:left; margin-left:20px; ">Food HERO</h1></a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars ml-1"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav text-uppercase ml-auto">
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'home'%}#aboutus">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'home'%}#product14">대표 물품</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'foodBankMap' %}">푸드뱅크 지도</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{ % 'centerItem' %}">물품 조회</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'board' %}">게시판</a></li>
+                        {% if user_name %}
+						<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" onclick="return false;">{{user_name}} 님!</a>
+							<ul class="dropdown-menu">
+							  <li><a class="dropdown-item" href="{% url 'mypage' %}">내 정보</a></li>
+							  <li><a class="dropdown-item" href="{% url 'logout'%}?next={{request.get_full_path}}">Log Out!!</a></li>
+							</ul>
+						</li>
+					  {% else %}
+						<li class="nav-item"><a class="nav-link" href="{% url 'login'%}?next={{request.get_full_path}}">Log in</a></li>
+					  {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+<section class="page-section">
+
+    <!-- Start View area -->
+    <div style="width:850px; margin-bottom:150px; margin-top:150px;">
+      <div class="media border p-3" style="margin:50px; width:800px;">
+          <img src="/static/img/media.png" alt="Rabius" class="mr-3 mt-3 rounded-circle" style="width:60px;">
+          <div class="media-body" style="width:650px;">
+            <h4> "{{view.title}}"<br><span style="font-size:0.7em; color:gray;">{{view.writer.username}}</span></h4>
+            <pre>{{view.content}}</pre>
+          </div>
+      </div>
+        {% if update%}
+            <a href='javascript:history.back(-1)'><button type='button' style="float:right;" class='btn btn-secondary'>취소</button></a>
+            <button id="update" onclick="update({{view.id}})" style="float:right; margin-right:10px;" class="btn btn-secondary">수정</button>
+            <button id="remove" onclick="remove({{view.id}})"  style="float:right; margin-right:10px;"  class="btn btn-secondary">삭제</button>
+
+        {% else %}
+            <a href="{% url 'board'%}">
+            <button id="gopost" style="float:right; background-color:#b68834; color:white; opacity:0.8;" class="btn">목록으로</button>
+            </a>
+            {% if islike %}
+                <button id="islike" onclick="islike({{view.id}})" style="float:right; position:relative; bottom:20px; margin-right:10px; background-color:white; color:red; font-size:2.5em; font-weight:bold; opacity:0.8;"  class="btn">♥</button>
+            {% else %}
+                <button id="notlike" onclick="notlike({{view.id}})" style="float:right; position:relative; bottom:20px; margin-right:10px; background-color:white; color:red; font-size:2.5em; font-weight:bold; opacity:0.8;"  class="btn">♡</button>
+            {% endif %}
+        {% endif %}
+
+
+    </div>
+    <!-- end View area-->
+
+</section>
+{% block script %}
+<script>
+        function islike(id){
+            $.getJSON("{% url 'islike'%}?user_id={{user_email}}&post_id="+id,function(jsonObj){
+                $("#islike").attr("onclick","notlike({{view.id}})");
+                $("#islike").text("♡");
+                $("#islike").attr("id","notlike");
+            });
+        }
+
+        function notlike(id){
+            $.getJSON("{% url 'notlike'%}?user_id={{user_email}}&post_id="+id,function(jsonObj){
+                var error=jsonObj.error;
+                if (error){
+                    alert(error);
+                }
+                else{
+                    $("#notlike").attr("onclick","islike({{view.id}})");
+                    $("#notlike").text("♥");
+                    $("#notlike").attr("id","islike");
+                }
+            });
+        }
+
+        function update(id){
+            location.href="{% url 'write'%}?id="+id;
+        }
+        function remove(id){
+            location.href="{% url 'remove'%}?id="+id;
+        }
+    </script>
+{% endblock %}
+{% endblock %}
+
+
+

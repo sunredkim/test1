@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #212529" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand js-scroll-trigger" href="{% url 'home'%}#page-top"><h1 style="color:white; float:left; margin-left:20px; ">Food HERO</h1></a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars ml-1"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav text-uppercase ml-auto">
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'home'%}#aboutus">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'home'%}#product14">대표 물품</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'home'%}#foodmap">푸드뱅크 지도</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'centerItem' %}">물품 조회</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'board' %}">게시판</a></li>
+                        {% if user_name %}
+						<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" onclick="return false;">{{user_name}} 님!</a>
+							<ul class="dropdown-menu">
+							  <li><a class="dropdown-item" href="{% url 'mypage' %}">내 정보</a></li>
+							  <li><a class="dropdown-item" href="{% url 'logout'%}?next={{request.get_full_path}}">Log Out!!</a></li>
+							</ul>
+						</li>
+					  {% else %}
+						<li class="nav-item"><a class="nav-link" href="{% url 'login'%}?next={{request.get_full_path}}">Log in</a></li>
+					  {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+<section class="page-section">
+    <!-- Start Write area -->
+    <div class="container" style="margin-top:100px; margin-bottom:50px;">
+    <h2>문의 사항</h2>
+      <form id="write_form" method="POST" action="{% url 'board' %}" >
+        {% csrf_token %}
+        <div class="form-group" style="margin-top:20px;">
+          <label for="title" style="font-weight:bold;">제목:</label>
+          <input type="text" class="form-control" style="width:70%;" id="title" name="title" required>
+        </div>
+
+        <div class="form-group">
+            <label for="content" style="font-weight:bold;">수정 요청:</label>
+            <textarea class="form-control" rows="8" style="width:70%;" id="content" name="content" required></textarea>
+            <script>
+                $("#content").attr("placeholder","지도 정보에 문제가 있으신가요? 건의사항을 자유롭게 작성해주세요.\n"+
+                                                 "- 삼성역점 이디야 폐업했어요.\n"+
+                                                 "- 7호선 사가정역의 탐앤탐스 정보가 없어요.\n\n"+
+                                                 "서비스에 문제가 있으신가요?\n"+
+                                                 "- 빽다방 추가해주세요.\n"+
+                                                 "- 스타벅스 신메뉴 나왔어요!");
+            </script>
+        </div>
+
+        <button id="sub_btn" type="submit" style="background-color:#b68834; border-color:#b68834; color:white; opacity:0.8;" class="btn btn-secondary">제출</button>
+        <script>
+          if("{{view}}"){
+            document.write("<a href='javascript:history.back(-1)'><button type='button' class='btn btn-secondary'>취소</button></a>")
+            $('h2').text("건의 사항(수정)");
+            //띄어쓰기 여러개를 표현
+            $('#title').val("{{view.title|escapejs}}");
+            //개행처리는 <br>로 대체
+            var str="{{view.content|linebreaksbr}}"
+            str=str.replace(/<br>/g,"\n");
+            $('#content').html(str);
+            $('#sub_btn').html("수정 완료");
+            $('#sub_btn').attr("style","");
+            $('#write_form').attr("action","{% url 'update'%}?id="+{{view.id}});
+            $('#logout').empty();
+          }
+        </script>
+      </form>
+    </div>
+    <!-- end Write area-->
+</section>
+
+{% endblock %}
